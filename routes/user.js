@@ -1,14 +1,10 @@
 const express = require('express')
 const router = express.Router()
 const User = require('../models/User')
-
-// WELCOME
-router.get('/', (req, res) => {
-	res.send('Welcome page')
-})
+const verifyToken = require('../routes/verify')
 
 // INDEX
-router.get('/user', async (req, res) => {
+router.get('/', async (req, res) => {
 	try {
 		const user = await User.find()
 		res.json(user)
@@ -18,10 +14,13 @@ router.get('/user', async (req, res) => {
 })
 
 // CREATE
-router.post('/user/store', async (req, res) => {
+router.post('/store', verifyToken, async (req, res) => {
 	const userRequest = new User({
-		nama: req.body.nama,
-		alamat: req.body.alamat
+		name: req.body.name,
+		username: req.body.username,
+		email: req.body.email,
+		password: req.body.password,
+		address: req.body.address
 	})
 
 	try {
@@ -33,7 +32,7 @@ router.post('/user/store', async (req, res) => {
 })
 
 // READ
-router.get('/user/show/:id', async (req, res) => {
+router.get('/show/:id', verifyToken, async (req, res) => {
 	try {
 		const user = await User.find({_id: req.params.id})
 		res.json(user)
@@ -43,11 +42,14 @@ router.get('/user/show/:id', async (req, res) => {
 })
 
 // UPDATE
-router.put('/user/update/:id', async (req, res) => {
+router.put('/update/:id', verifyToken, async (req, res) => {
 	try {
 		const userRequest = await User.updateOne({_id: req.params.id}, {
-			nama: req.body.nama,
-			alamat: req.body.alamat
+			username: req.body.username,
+			email: req.body.email,
+			password: req.body.password,
+			name: req.body.name,
+			address: req.body.address
 		})
 		res.json(userRequest)
 	}catch(err) {
@@ -56,7 +58,7 @@ router.put('/user/update/:id', async (req, res) => {
 })
 
 // DELETE
-router.delete('/user/delete/:id', async (req, res) => {
+router.delete('/delete/:id', verifyToken, async (req, res) => {
 	try {
 		const user = await User.deleteOne({_id: req.params.id})
 		res.json(user)

@@ -11,10 +11,16 @@ app.use(parser())
 app.use(cors())
 
 // Import routes
-const Route = require('./routes/web')
+const Welcome = require('./routes/welcome')
+const Auth = require('./routes/auth')
+const User = require('./routes/user')
 
-// Routes example
-app.use('/', Route)
+// Routes welcome
+app.use('/api', Welcome)
+// Routes auth
+app.use('/api/auth', Auth)
+// Routes auth
+app.use('/api/user', User)
 
 // DB Connection
 mongoose.connect(process.env.DB_CONNECTION,
